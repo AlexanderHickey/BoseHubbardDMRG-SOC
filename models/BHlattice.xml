@@ -1,0 +1,36 @@
+<!--
+   Model definition for the 1D Extended Bose-Hubbard model with 
+   spin-orbit coupling. For use with the ALPS library.
+  -->
+
+<LATTICES>
+<LATTICE name="chain lattice" dimension="1">
+  <PARAMETER name="a" default="1"/>
+  <BASIS><VECTOR>a</VECTOR></BASIS>
+  <RECIPROCALBASIS><VECTOR>2*pi/a</VECTOR></RECIPROCALBASIS>
+</LATTICE>
+
+<UNITCELL name="simple1d" dimension="1">
+  <VERTEX/>
+  <EDGE><SOURCE vertex="1" offset="0"/><TARGET vertex="1" offset="1"/></EDGE>
+</UNITCELL>
+
+<LATTICEGRAPH name = "periodic chain lattice">
+  <FINITELATTICE>
+    <LATTICE ref="chain lattice"/>
+    <EXTENT dimension="1" size ="L"/>
+    <BOUNDARY type="periodic"/>
+  </FINITELATTICE>
+  <UNITCELL ref="simple1d"/>
+</LATTICEGRAPH>
+
+<LATTICEGRAPH name = "open chain lattice">
+  <FINITELATTICE>
+    <LATTICE ref="chain lattice"/>
+    <EXTENT dimension="1" size ="L"/>
+    <BOUNDARY type="open"/>
+  </FINITELATTICE>
+  <UNITCELL ref="simple1d"/>
+</LATTICEGRAPH>
+
+</LATTICES>

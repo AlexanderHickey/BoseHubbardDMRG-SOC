@@ -1,0 +1,80 @@
+<!--
+   Model definition for the 1D Extended Bose-Hubbard model with 
+   spin-orbit coupling. For use with the ALPS library.
+  -->
+<MODELS>
+
+<SITEBASIS name="two-component boson">
+  <PARAMETER name="NMax" default="infinity"/>
+  <QUANTUMNUMBER name="NUP" min="0" max="NMax"/>
+  <QUANTUMNUMBER name="NDO" min="0" max="NMax"/>
+  <OPERATOR name="bdagUP" matrixelement="sqrt(NUP+1)">
+    <CHANGE quantumnumber="NUP" change="1"/>
+  </OPERATOR>
+  <OPERATOR name="bUP" matrixelement="sqrt(NUP)">
+    <CHANGE quantumnumber="NUP" change="-1"/>
+  </OPERATOR>
+  <OPERATOR name="bdagDO" matrixelement="sqrt(NDO+1)">
+    <CHANGE quantumnumber="NDO" change="1"/>
+  </OPERATOR>
+  <OPERATOR name="bDO" matrixelement="sqrt(NDO)">
+    <CHANGE quantumnumber="NDO" change="-1"/>
+  </OPERATOR>
+  <OPERATOR name="nUP" matrixelement="NUP"/>
+  <OPERATOR name="nDO" matrixelement="NDO"/>
+</SITEBASIS>
+
+
+<BASIS name="two-component boson">
+   <SITEBASIS ref="two-component boson"/>
+</BASIS>
+
+<SITEOPERATOR name="onsite" site="x">
+   nUP(x)*(nUP(x)-1)/2 + nDO(x)*(nDO(x)-1)/2
+</SITEOPERATOR>
+
+<SITEOPERATOR name="sum" site="x">
+   nUP(x)+nDO(x)
+</SITEOPERATOR>
+
+<SITEOPERATOR name="diff" site="x">
+   nUP(x)-nDO(x)
+</SITEOPERATOR>
+
+<SITEOPERATOR name="prod" site="x">
+   nUP(x)*nDO(x)
+</SITEOPERATOR>
+
+<BONDOPERATOR name="spin_hop" source="x" target="y">
+   bdagUP(x)*bUP(y)+bdagUP(y)*bUP(x)+bdagDO(x)*bDO(y)+bdagDO(y)*bDO(x)
+</BONDOPERATOR>
+
+<BONDOPERATOR name="spin_flip" source="x" target="y">
+   bdagUP(x)*bDO(y)+bdagDO(y)*bUP(x)-bdagDO(x)*bUP(y)-bdagUP(y)*bDO(x)
+</BONDOPERATOR>
+
+<HAMILTONIAN name="SOC Bose Hubbard">
+  <PARAMETER name="t" default="0.05"/>
+  <PARAMETER name="mu" default="0.5"/>
+  <PARAMETER name="V" default="0.4"/>
+  <PARAMETER name="Uud" default="0"/>
+  <PARAMETER name="hz" default="0"/>
+  <PARAMETER name="cg" default="1"/>
+  <PARAMETER name="sg" default="0"/>
+  <BASIS ref="two-component boson"/>
+  <SITETERM site="i">
+    <PARAMETER name="mu#" default="mu"/>
+    <PARAMETER name="Uud#" default="Uud"/>
+	<PARAMETER name="hz#" default="hz"/>
+    -mu#*sum(i)+onsite(i)+hz#*diff(i)+Uud#*prod(i)
+  </SITETERM> 
+  <BONDTERM source="i" target="j">
+    <PARAMETER name="t#" default="t"/>
+    <PARAMETER name="V#" default="V"/>
+	<PARAMETER name="cg#" default="cg"/>
+	<PARAMETER name="sg#" default="sg"/>
+    -t#*cg#*spin_hop(i,j)-t#*sg#*spin_flip(i,j)+V#*sum(i)*sum(j)
+  </BONDTERM>
+</HAMILTONIAN>
+
+</MODELS>
